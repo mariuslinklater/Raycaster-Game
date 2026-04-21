@@ -1,6 +1,6 @@
-// Project Title
-// Your Name
-// Date
+// Raycaster Game --- CS30 Capstone Final Project
+// Marius Linklater
+// April 21 2026
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
