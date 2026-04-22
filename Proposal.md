@@ -24,5 +24,5 @@
 - sound design
 - different enemy types
 - randomly generated rooms
-- game mode with infinite enemies and infinitely large room --- randomly generated
+- endless game mode with infinite enemies and infinitely large room --- randomly generated
 - minimap
