@@ -5,13 +5,14 @@
 ## Needs to Have
 - character + camera movement
 - 3d environement to move in
-- enemies
+- stationary enemies
 - attack for enemies
 - health system
-- menu + inventory
-- textures for walls and stuff
+
 
 ## Nice to Have
+- menu + inventory
+- textures for walls and stuff
 - animation
 - cutscenes
 - different difficulties
@@ -20,7 +21,7 @@
 - different weapons and attacks
 - weapon upgrades
 - a currency system
-- more sophisticated enemies, with like strategies and stuff
+- more sophisticated enemies, with like strategies and movement and stuff
 - sound design
 - different enemy types
 - randomly generated rooms

@@ -5,6 +5,20 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+const TILE_SIZE = 10;
+let map = [[1,1,1,1,1]
+           [1,0,0,0,1]
+           [1,0,1,0,1]
+           [1,0,1,0,1]
+           [1,1,1,1,1]];
+
+class Ray {
+  constructor(){
+    this.x = x;
+    this.y = y;
+
+  }
+}   
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -13,4 +27,14 @@ function setup() {
 function draw() {
   background(220);
   square(mouseX, mouseY, 60);
+}
+
+function makeFlatMap() {
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+      if (map[y][x] === 1) {
+        square(x * TILE_SIZE,y * TILE_SIZE, TILE_SIZE);  
+      }
+    }
+  }
 }
