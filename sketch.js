@@ -12,13 +12,21 @@ let map = [[1,1,1,1,1]
            [1,0,1,0,1]
            [1,1,1,1,1]];
 
-class Ray {
+class Ray(x, y) {
   constructor(){
     this.x = x;
     this.y = y;
 
   }
-}   
+}  
+
+class Wall(x, y) {
+  constructor(x, y) {
+  this.x = x;
+  this.y = y;  
+  }
+
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
