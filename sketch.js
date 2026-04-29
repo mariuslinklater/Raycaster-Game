@@ -5,6 +5,7 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+console.log('diddy')
 const TILE_SIZE = 10;
 let map = [[1,1,1,1,1]
            [1,0,0,0,1]
@@ -34,7 +35,6 @@ function setup() {
 
 function draw() {
   background(220);
-  square(mouseX, mouseY, 60);
 }
 
 function makeFlatMap() {
