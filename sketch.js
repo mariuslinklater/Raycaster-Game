@@ -32,6 +32,7 @@ class Wall {
 
   draw(a, b) {
     stroke(255);
+    
     line(this.ax, this.ay, this.bx, this.by);
   }
 }
