@@ -30,7 +30,7 @@ class Wall {
     this.bx = bx;
   }
 
-  draw(a, b) {
+  draw() {
     stroke(255);
     
     line(this.ax, this.ay, this.bx, this.by);
@@ -96,7 +96,7 @@ function setup() {
 
 function draw() {
   background(220);
-  for (wall of walls) {
-    wall.draw();
+  for (let i = 0; i < walls.length; i++) {
+    walls[i].draw;
   }
 }
