@@ -31,8 +31,8 @@ class Wall {
   }
 
   draw() {
-    stroke(255);
-    
+    strokeWeight(5);
+    stroke('black');
     line(this.ax, this.ay, this.bx, this.by);
   }
 }
@@ -49,18 +49,18 @@ class Player {
     }
   }
   move(){
-    if (keyIsDown(68)) {
-      this.x++;
-    }
-    if (keyIsDown(65)) {
-      this.x--; 
-    }
-    if (keyIsDown(87)) {
-      this.y++;
-    }
-    if (keyIsDown(83)) {
-      this.y--;  
-    }
+    // if (keyIsDown(68)) {
+    //   this.x++;
+    // }
+    // if (keyIsDown(65)) {
+    //   this.x--; 
+    // }
+    // if (keyIsDown(87)) {
+    //   this.y++;
+    // }
+    // if (keyIsDown(83)) {
+    //   this.y--;  
+    // }
   }
   rotate(){
   
@@ -69,34 +69,35 @@ class Player {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  for (let x = 0; x < map.length; x++){ // loops through the map to see where the walls are, if a point on the map is in a wall it checks its neighbors to make actual walls
-    for (let y = 0; x < map[x].length; y++){
-      if (map[x][y] === 1){
-        if (map[x][y - 1] === 1) {
-          let wall = new Wall(map[x] * cellSize, map[y] * cellSize , map[x] * cellSize, map[y - 1] * cellSize);
-          walls.push(wall);
-        }
-        if (map[x][y + 1] === 1){
-          let wall = new Wall(map[x] * cellSize, map[y] * cellSize, map[x] * cellSize, map[y + 1] * cellSize);
-          walls.push(wall);
-        }
-        if (map[x + 1][y] === 1){
-          let wall = new Wall(map[x] * cellSize, map[y] * cellSize, map[x + 1] * cellSize, map[y] * cellSize);
-          walls.push(wall);
-        }
-        if (!map[x] === 0 && map[x - 1][y] === 1) {
-          console.log('john pork');
-          let wall = new Wall(map[x] * cellSize, map[y] * cellSize, map[x - 1] * cellSize, map[y] * cellSize);
-          walls.push(wall);
-        }
-      }
-    }
-  }
+
 }
 
 function draw() {
+  drawWalls();
   background(220);
   for (let i = 0; i < walls.length; i++) {
-    walls[i].draw;
+    walls[i].draw();
+  }
+}
+
+function drawWalls() {
+
+  for (let x = 0; x < map.length; x++) {
+    for (let y = 0; y < map[x].length; y++) {
+      if (map[x][y] === 1) {
+        if (map[x + 1][y] === 1) {
+          let wall = new Wall(map[x], map[y], map[x + 1]);
+        }
+        else if (map[x - 1][y] === 1) {
+        
+        }
+        else if (map[x][y + 1] === 1) {
+        
+        }
+        else if (map[x][y - 1] === 1) {
+        
+        }
+      }
+    }
   }
 }
