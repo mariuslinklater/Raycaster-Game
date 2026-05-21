@@ -4,6 +4,7 @@
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
+
 let cellSize = 20;
 let walls = [];
 let map = 
@@ -100,4 +101,8 @@ function drawWalls() {
       }
     }
   }
+}
+
+function backgroundNoise(location) {
+
 }
