@@ -81,7 +81,10 @@ function makeMapWalls(map) {
   for (let i = 0; i < map.length; i++) {
     for (let j = 0; j < map[i].length; j++) {
       if (map[i][j] === 1) {
-        console.log('wall here!');
+        if (map[i][j + 1] === 1 && !map[i][j] === undefined) {
+          let wall = new Wall (i * cellSize);
+          theWalls.push(wall);
+        }
       }
     }
   }
