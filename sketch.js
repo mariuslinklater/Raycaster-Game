@@ -6,7 +6,7 @@
 // - describe what you did to take this project "above and beyond"
 
 let cellSize = 20;
-let walls = [];
+let theWalls = [];
 let map = 
   [[1,1,1,1,1,1,1,1],
     [1,0,0,1,0,0,0,1],
@@ -15,14 +15,21 @@ let map =
     [1,0,0,0,0,1,0,1],
     [1,0,0,0,0,1,0,1],
     [1,1,1,1,1,1,1,1]];
+
 class Ray {
   constructor(x, y, angle){
     
   }
   cast(){
-
+  }
+  collide(Ray, wall) {
+    let collisionTrue = collideLineLine(this.Ray.x1, this.Ray.x2, this.wall.x1, this.wall.x2);
+    if (collisionTrue) {
+      return collideLineLine(this.Ray.x1, this.Ray.x2, this.wall.x1, this.wall.x2, true);
+    }
   }
 }
+
 class Wall {
   constructor(ay, ax, by, bx){
     this.ay = ay;
@@ -49,60 +56,33 @@ class Player {
       this.viewfield.push(new Ray(this.x, this.y, i));
     }
   }
-  move(){
-    // if (keyIsDown(68)) {
-    //   this.x++;
-    // }
-    // if (keyIsDown(65)) {
-    //   this.x--; 
-    // }
-    // if (keyIsDown(87)) {
-    //   this.y++;
-    // }
-    // if (keyIsDown(83)) {
-    //   this.y--;  
-    // }
-  }
-  rotate(){
   
-  }
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-
+  makeMapWalls(map);
+  let wall = new Wall(random(0, height), random(0, width), random(0, height), random(0, width));
+  theWalls.push(wall);
 }
 
 function draw() {
-  drawWalls();
-  background(220);
-  for (let i = 0; i < walls.length; i++) {
-    walls[i].draw();
+  background(220);  
+  drawWalls(theWalls);
+}
+
+function drawWalls(theWalls) {
+  for (let i = 0; i < theWalls.length; i++) {
+    theWalls[0].draw();
   }
 }
 
-function drawWalls() {
-
-  for (let x = 0; x < map.length; x++) {
-    for (let y = 0; y < map[x].length; y++) {
-      if (map[x][y] === 1) {
-        if (map[x + 1][y] === 1) {
-          let wall = new Wall(map[x], map[y], map[x + 1]);
-        }
-        else if (map[x - 1][y] === 1) {
-        
-        }
-        else if (map[x][y + 1] === 1) {
-        
-        }
-        else if (map[x][y - 1] === 1) {
-        
-        }
+function makeMapWalls(map) {
+  for (let i = 0; i < map.length; i++) {
+    for (let j = 0; j < map[i].length; j++) {
+      if (map[i][j] === 1) {
+        console.log('wall here!');
       }
     }
   }
-}
-
-function backgroundNoise(location) {
-
 }
