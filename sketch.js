@@ -5,6 +5,7 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+let harjot;
 let cellSize = 20;
 let theWalls = [];
 let map = 
@@ -18,7 +19,10 @@ let map =
 
 class Ray {
   constructor(x, y, angle){
-    
+    this.x = x;
+    this.y = y;
+    this.angle = angle;
+    this.length = 800;
   }
   cast(){
   }
@@ -27,6 +31,12 @@ class Ray {
     if (collisionTrue) {
       return collideLineLine(this.Ray.x1, this.Ray.x2, this.wall.x1, this.wall.x2, true);
     }
+  }
+  draw() {
+    let xVector = this.length * cos(this.angle);
+    let yVector = this.length * sin(this.angle);
+
+    line(this.x, this.y, this.x + xVector, this.y + yVector);
   }
 }
 
@@ -50,25 +60,32 @@ class Player {
     this.x = x;
     this.y = y;
     this. viewAngle = 0;
-    this.fov = 45;
+    this.fov = fov;
     this.viewfield = [];
     for (let i = 0; i < this.fov; i++) {
       this.viewfield.push(new Ray(this.x, this.y, i));
     }
   }
   
+  drawHarjot(x, y) {
+    fill('red');
+    circle(x, y, 5);
+  }
+  
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  makeMapWalls(map);
+  createCanvas(windowWidth, windowHeight); 
+  let harjot = new Player(width/2, height/2, 360);
   let wall = new Wall(random(0, height), random(0, width), random(0, height), random(0, width));
   theWalls.push(wall);
+
 }
 
 function draw() {
   background(220);  
   drawWalls(theWalls);
+  runPlayer();harjot.drawHarjot();
 }
 
 function drawWalls(theWalls) {
@@ -88,4 +105,8 @@ function makeMapWalls(map) {
       }
     }
   }
+}
+
+function runPlayer() {
+  drawHarjot(mouseX, mouseY);  
 }
