@@ -35,10 +35,22 @@ class Ray {
 
   }
   draw() {
+    if(keyIsDown(LEFT_ARROW)){
+      viewAngleValue-= 0.1;
+    }
+    if(keyIsDown(RIGHT_ARROW)){
+      viewAngleValue+= 0.1;
+    }
+    push();
+
+    translate(this.x, this.y);
+    rotate(viewAngleValue, this.startPoint);
+    
     let xVector = this.length * cos(this.angle);
     let yVector = this.length * sin(this.angle);
 
-    line(this.x, this.y, this.x + xVector, this.y + yVector);
+    line(0, 0, xVector, yVector);
+    pop();
   }
 }
 
@@ -62,6 +74,7 @@ class Player {
     this.y = y;
     this. viewAngle = 0;
     this.fov = fov;
+    this.speed = 5;
     for (let i = 0; i < this.fov; i++) {
       rays.push(new Ray(this.x, this.y, i));
     }
@@ -69,16 +82,16 @@ class Player {
   
   draw() {
     if (keyIsDown(87)) {
-      player.y -= 1;
+      player.y -= this.speed;
     }
     if (keyIsDown(83)) {
-      player.y += 1;
+      player.y += this.speed;
     }
     if (keyIsDown(68)) {
-      player.x += 1;
+      player.x += this.speed;
     }
     if (keyIsDown(65)) {
-      player.x -= 1;
+      player.x -= this.speed;
     }
     fill('red');
     circle(this.x, this.y, 5);
@@ -131,20 +144,5 @@ function makeMapWalls(map) {
         }
       }
     }
-  }
-}
-
-function keyIsDown() {
-  if (key === w) {
-    player.y -= 1;
-  }
-  if (key === s) {
-    player.y += 1;
-  }
-  if (key === d) {
-    player.x += 1;
-  }
-  if (key === a) {
-    player.x -= 1;
   }
 }
