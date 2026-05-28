@@ -8,14 +8,14 @@
 let player;
 let viewAngleValue = 0;
 let rays  = [];
-let cellSize = 20;
+let cellSize = 100;
 let theWalls = [];
 let map = 
   [[1,1,1,1,1,1,1,1],
     [1,0,0,1,0,0,0,1],
     [1,0,0,1,0,0,0,1],
-    [1,0,0,0,0,0,0,1],
     [1,0,0,0,0,1,0,1],
+    [1,0,1,0,0,1,0,1],
     [1,0,0,0,0,1,0,1],
     [1,1,1,1,1,1,1,1]];
 
@@ -55,16 +55,17 @@ class Ray {
 }
 
 class Wall {
-  constructor(ay, ax, by, bx){
-    this.ay = ay;
-    this.ax = ax;
-    this.by = by;
-    this.bx = bx;
+  constructor(x1, y1 , x2, y2){
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    
   }
 
   draw() {
     stroke('black');
-    line(this.ax, this.ay, this.bx, this.by);
+    line(this.x1, this.y1, this.x2, this.y2);
   }
 }
 
@@ -102,9 +103,8 @@ class Player {
 function setup() {
   angleMode(DEGREES);
   createCanvas(windowWidth, windowHeight); 
-  let wall = new Wall(random(0, height), random(0, width), random(0, height), random(0, width));
+  makeMapWalls(map);
   player = new Player(random(0, width), random(0, height), 60);
-  theWalls.push(wall);;
 
 }
 
@@ -130,17 +130,32 @@ function draw() {
 
 function drawWalls(theWalls) {
   for (let i = 0; i < theWalls.length; i++) {
-    theWalls[0].draw();
+    theWalls[i].draw();
   }
 }
 
 function makeMapWalls(map) {
-  for (let i = 0; i < map.length; i++) {
-    for (let j = 0; j < map[i].length; j++) {
-      if (map[i][j] === 1) {
-        if (map[i][j + 1] === 1 && !map[i][j] === undefined) {
-          let wall = new Wall (i * cellSize);
-          theWalls.push(wall);
+  for (let row = 0; row < map.length; row++) {
+    for (let col = 0; col < map[row].length; col++) {
+      if (map[row][col] === 1) {
+        let x = col * cellSize;
+        let y = row * cellSize;
+
+        if (row === 0 || map[row - 1][col] === 0) {
+          theWalls.push(new Wall(x, y, x + cellSize, y));
+        }
+
+        if (row === map.length - 1 || map[row + 1][col] === 0) {
+          theWalls.push(new Wall(x, y + cellSize, x + cellSize, y + cellSize));
+        }
+
+        if (col === 0 || map[row][col - 1] === 0) {
+          theWalls.push(new Wall(x, y, x, y + cellSize));
+        }
+
+        if (col === map[row].length - 1 || map[row][col + 1] === 0) {
+          theWalls.push(new Wall(x + cellSize, y, x + cellSize, y + cellSize));
+
         }
       }
     }
