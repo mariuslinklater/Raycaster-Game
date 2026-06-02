@@ -7,6 +7,7 @@
 
 let player;
 let viewAngleValue = 0;
+let anglechanged;
 let rays  = [];
 let cellSize = 100;
 let theWalls = [];
@@ -19,37 +20,48 @@ let map =
     [1,0,0,0,0,1,0,1],
     [1,1,1,1,1,1,1,1]];
 
+
 class Ray {
   constructor(x, y, angle){
     this.x = x;
     this.y = y;
     this.angle = angle;
     this.length = 800;
+    this.x2 = this.length * cos(this.angle);
+    this.y2 = this.length * sin(this.angle);
   }
-  cast(){
+  update(){
+    this.x = player.x;
+    this.y = player.y;
+
+    let currentAngle = viewAngle + this.angle;
+    this.x2 = this.x + this.length * cos(currentAngle);
+    this.y2 = this.y + this.length * sin(currentAngle);
+    
   }
-  collide(Ray, wall) {
-    let collisionPoint = collideLineLine(Ray.x1, Ray.x2, wall.x1, wall.x2, true);
+
+  collide(ray, wall) {
+    let collisionPoint = collideLineLine(ray.x, ray.y, ray.x2, ray.y2, wall.x1, wall.y1, wall.x2, wall.y2, true);
     fill('red');
     circle(collisionPoint.x, collisionPoint.y, 15);
-
   }
   draw() {
     if(keyIsDown(LEFT_ARROW)){
       viewAngleValue-= 0.1;
+      anglechanged = true;
     }
     if(keyIsDown(RIGHT_ARROW)){
       viewAngleValue+= 0.1;
+      anglechanged = true;
     }
     push();
 
     translate(this.x, this.y);
-    rotate(viewAngleValue, this.startPoint);
-    
-    let xVector = this.length * cos(this.angle);
-    let yVector = this.length * sin(this.angle);
+    rotate(viewAngleValue);
+    let x2 = this.length * cos(this.angle);
+    let y2 = this.length * sin(this.angle);
+    line(0, 0, x2, y2);
 
-    line(0, 0, xVector, yVector);
     pop();
   }
 }
@@ -69,13 +81,17 @@ class Wall {
   }
 }
 
+
 class Player {
   constructor(x, y, fov) {
+    this.health = 100;
+
     this.x = x;
     this.y = y;
     this. viewAngle = 0;
     this.fov = fov;
     this.speed = 5;
+
     for (let i = 0; i < this.fov; i++) {
       rays.push(new Ray(this.x, this.y, i));
     }
@@ -100,13 +116,20 @@ class Player {
   
 }
 
+function preload(){
+
+}
+
+
 function setup() {
+  collideDebug(true);
   angleMode(DEGREES);
   createCanvas(windowWidth, windowHeight); 
   makeMapWalls(map);
-  player = new Player(random(0, width), random(0, height), 60);
+  player = new Player(300, 300, 1);
 
 }
+
 
 function draw() {
   background(220);  
@@ -115,11 +138,9 @@ function draw() {
   player.draw();
 
   for(let ray of rays) {
-    ray.x = player.x;
-    ray.y = player.y;
+    ray.update();
     ray.draw();
   }
-
 
   for(let ray = 0; ray < rays.length; ray++){
     for(let wall = 0; wall < theWalls.length; wall++){
@@ -128,11 +149,13 @@ function draw() {
   }
 }
 
+
 function drawWalls(theWalls) {
   for (let i = 0; i < theWalls.length; i++) {
     theWalls[i].draw();
   }
 }
+
 
 function makeMapWalls(map) {
   for (let row = 0; row < map.length; row++) {
@@ -160,4 +183,9 @@ function makeMapWalls(map) {
       }
     }
   }
+}
+
+
+function make3d(){
+
 }
