@@ -10,7 +10,7 @@ let viewAngleValue = 0;
 let rays  = [];
 let cellSize = 20;
 let theWalls = [];
-let map = 
+let firstMap = 
   [[1,1,1,1,1,1,1,1],
     [1,0,0,1,0,0,0,1],
     [1,0,0,1,0,0,0,1],
@@ -19,7 +19,19 @@ let map =
     [1,0,0,0,0,1,0,1],
     [1,1,1,1,1,1,1,1]];
 
-
+let secondMap = 
+  [[1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,1,1,0,0,0,0,0,0,1],
+    [1,0,0,1,1,0,0,0,1,0,0,1],
+    [1,0,0,0,0,0,0,0,1,0,0,1],
+    [1,0,0,0,0,0,0,0,1,0,0,1],
+    [1,0,0,0,0,0,0,0,1,0,0,1],
+    [1,0,0,1,1,1,1,1,1,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1]];
 class Ray {
   constructor(x, y, angle){
     this.x = x;
@@ -58,10 +70,10 @@ class Ray {
 
   draw() {
     if(keyIsDown(LEFT_ARROW) || keyIsDown(65)){
-      viewAngleValue-= 0.1;
+      viewAngleValue-= 0.05;
     }
     if(keyIsDown(RIGHT_ARROW) || keyIsDown(68)){
-      viewAngleValue+= 0.1;
+      viewAngleValue+= 0.05;
     }
     push();
 
@@ -84,7 +96,8 @@ class Wall {
   }
 
   draw() {
-    stroke('black');
+    strokeWeight(3);
+    stroke('white');
     line(this.x1, this.y1, this.x2, this.y2);
   }
 }
@@ -113,7 +126,7 @@ class Player {
         this.x = nextX;
       }
       if (collideWithWalls(this.x, nextY) === false) {
-         this.y = nextY;
+        this.y = nextY;
       }
     }
     if (keyIsDown(83)) {
@@ -126,8 +139,9 @@ class Player {
         this.y = nextY;
       }
     }
+    strokeWeight(2);
     fill('red');
-    circle(this.x, this.y, this.radius)
+    circle(this.x, this.y, this.radius);
   }
 }
 
@@ -140,14 +154,14 @@ function preload(){
 function setup() {
   angleMode(DEGREES);
   createCanvas(windowWidth, windowHeight); 
-  makeMapWalls(map);
+  makeMapWalls(secondMap);
   player = new Player(30, 50, 100);
 
 }
 
 
 function draw() {
-  background(220); 
+  background(0); 
   make3d();  
   drawWalls(theWalls);
  
@@ -217,8 +231,11 @@ function make3d() {
   for (let i = 0; i < rays.length; i++) {
     let collisionPoint = rays[i].cast();
     let theRayDistance = dist(player.x, player.y, collisionPoint.x, collisionPoint.y);
-    let wallHeight = (1/theRayDistance) * 7000;
+    let wallHeight = 1/theRayDistance * 7000;
     noStroke();
-    rect(i * wallSliceWidth, (height / 2) - (wallHeight / 2), wallSliceWidth, wallHeight);
+    
+    fill( 1/theRayDistance * 4000, 1/theRayDistance * 4000, 1/theRayDistance * 4000);
+    
+    rect(i * wallSliceWidth, height / 2 - wallHeight / 2, wallSliceWidth, wallHeight);
   }
 }
