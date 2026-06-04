@@ -5,7 +5,8 @@
 // Extra for Experts:
 // a lot of this uses collide2d to work, so i had to use a different library, 
 
-let player;
+// let player = {x, y};
+let thePlayers = [];
 let viewAngleValue = 0;
 let rays  = [];
 let cellSize = 20;
@@ -32,6 +33,7 @@ let secondMap =
     [1,0,0,0,0,0,0,0,0,0,0,1],
     [1,0,0,0,0,0,0,0,0,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1]];
+
 class Ray {
   constructor(x, y, angle){
     this.x = x;
@@ -69,10 +71,10 @@ class Ray {
   }
 
   draw() {
-    if(keyIsDown(LEFT_ARROW) || keyIsDown(65)){
+    if(keyIsDown(LEFT_ARROW)){
       viewAngleValue-= 0.05;
     }
-    if(keyIsDown(RIGHT_ARROW) || keyIsDown(68)){
+    if(keyIsDown(RIGHT_ARROW)){
       viewAngleValue+= 0.05;
     }
     push();
@@ -139,6 +141,28 @@ class Player {
         this.y = nextY;
       }
     }
+
+    if (keyIsDown(65)) {
+      let nextX = this.x + sin(viewAngleValue + this.fov/2) * this.speed;
+      let nextY = this.y - sin(viewAngleValue + this.fov/2) * this.speed;
+      if (collideWithWalls(nextX, this.y) === false) {
+        this.x = nextX;
+      }
+      if (collideWithWalls(this.x, nextY) === false) {
+        this.y = nextY;
+      }
+    }
+
+    if (keyIsDown(68)) {
+      let nextX = this.x - sin(viewAngleValue + this.fov/2) * this.speed;
+      let nextY = this.y - cos(viewAngleValue + this.fov/2) * this.speed;
+      if (collideWithWalls(nextX, this.y) === false) {
+        this.x = nextX;
+      }
+      if (collideWithWalls(this.x, nextY) === false) {
+        this.y = nextY;
+      }
+    }
     strokeWeight(2);
     fill('red');
     circle(this.x, this.y, this.radius);
@@ -147,7 +171,7 @@ class Player {
 
 
 function preload(){
-
+  partyConnect("wss://demoserver.p5party.org", "raycaster_battle_cs30");
 }
 
 
@@ -155,7 +179,9 @@ function setup() {
   angleMode(DEGREES);
   createCanvas(windowWidth, windowHeight); 
   makeMapWalls(secondMap);
+  
   player = new Player(30, 50, 100);
+  // thePlayers.push(player);
 
 }
 
@@ -227,15 +253,16 @@ function collideWithWalls(x, y) {
 
 
 function make3d() {
+
   let wallSliceWidth = width/rays.length;
   for (let i = 0; i < rays.length; i++) {
     let collisionPoint = rays[i].cast();
-    let theRayDistance = dist(player.x, player.y, collisionPoint.x, collisionPoint.y);
+
+    let theRayDistance = dist(player.x, player.y, collisionPoint.x, collisionPoint.y);   
     let wallHeight = 1/theRayDistance * 7000;
+   
     noStroke();
-    
-    fill( 255 , 1/theRayDistance * 4000, 1/theRayDistance * 4000);
-    
+    fill(1/theRayDistance * 4000 , 1/theRayDistance * 4000, 1/theRayDistance * 4000);
     rect(i * wallSliceWidth, height / 2 - wallHeight / 2, wallSliceWidth, wallHeight);
   }
 }
