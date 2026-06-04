@@ -38,8 +38,8 @@ class Ray {
     this.y = y;
     this.angle = angle;
     this.length = 800;
-    this.x2 = this.length * cos(this.angle);
-    this.y2 = this.length * sin(this.angle);
+    this.x2 = this.x + this.length * cos(this.angle);
+    this.y2 = this.y + this.length * sin(this.angle);
   }
   update(){
     this.x = player.x;
@@ -234,7 +234,7 @@ function make3d() {
     let wallHeight = 1/theRayDistance * 7000;
     noStroke();
     
-    fill( 1/theRayDistance * 4000, 1/theRayDistance * 4000, 1/theRayDistance * 4000);
+    fill( 255 , 1/theRayDistance * 4000, 1/theRayDistance * 4000);
     
     rect(i * wallSliceWidth, height / 2 - wallHeight / 2, wallSliceWidth, wallHeight);
   }
