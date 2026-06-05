@@ -5,7 +5,7 @@
 // Extra for Experts:
 // a lot of this uses collide2d to work, so i had to use a different library, it also uses p5.party to allow multiplayer
 
-let playerColors = ['red', 'green', 'yellow', 'orange', 'white', 'pink']
+let playerColors = ['red', 'green', 'yellow', 'orange', 'white', 'pink'];
 
 let viewAngleValue = 0;
 let rays  = [];
@@ -53,22 +53,30 @@ class Ray {
   }
 
   cast() {
-    let currentAngle = viewAngleValue + this.angle;
-    let x2 = this.x + this.length * cos(currentAngle);
-    let y2 = this.y + this.length * sin(currentAngle);
     let closestPoint;
     let smallestDistance = Infinity;
 
     for (let wall of theWalls) {
-      let collisionPoint = collideLineLine(this.x, this.y, x2, y2, wall.x1, wall.y1, wall.x2, wall.y2, true);   
+      let collisionPoint = collideLineLine(this.x, this.y, this.x2, this.y2, wall.x1, wall.y1, wall.x2, wall.y2, true);   
       if (!collisionPoint.x && !collisionPoint.y) {
         continue;   
       }
       let theDistance = dist(this.x, this.y, collisionPoint.x, collisionPoint.y);
       if (theDistance < smallestDistance) {
         smallestDistance = theDistance;
-        closestPoint = collisionPoint;
-    
+        closestPoint = collisionPoint;  
+      }
+    }
+
+    for (let player in shared.playerCount) {
+      let collisionPoint = collideLineCircle(this.x, this.y, x2, y2, shared[player].x, shared[player].y, shared[player].radius * 2, true);
+      if (!collisionPoint.x && !collisionPoint.y) {
+        continue;   
+      }
+      let theDistance = dist(this.x, this.y, collisionPoint.x, collisionPoint.y);
+      if (theDistance < smallestDistance) {
+        smallestDistance = theDistance;
+        closestPoint = collisionPoint;   
       }
     }
     return closestPoint;
@@ -196,9 +204,8 @@ function setup() {
 
   playerColor = playerColors[shared.playerCount - 1];
 
-  shared[yourPlayer] = {x: player.x, y: player.y, angle: viewAngleValue, color: playerColor};
+  shared[yourPlayer] = {x: player.x, y: player.y, color: playerColor};
 
-  console.log(shared[yourPlayer]);
   player.color = playerColor;
 }
 
@@ -206,7 +213,6 @@ function setup() {
 function draw() {
   shared[yourPlayer].x = player.x;
   shared[yourPlayer].y = player.y;
-  shared[yourPlayer].angle = viewAngleValue;
   shared[yourPlayer].color = player.color;
   background(0); 
   make3d();  
@@ -268,6 +274,11 @@ function collideWithWalls(x, y) {
       return true;
     }
   }
+  for (let player in shared.playerCount) {
+    if  (collideCircleCircle(x, y, player.radius * 2, shared[player].x, shared[player].y, player.radius * 2)) {
+      return true;
+    }
+  }
   return false;
 }
 
@@ -278,8 +289,9 @@ function make3d() {
   for (let i = 0; i < rays.length; i++) {
     let collisionPoint = rays[i].cast();
     let theRayDistance = dist(player.x, player.y, collisionPoint.x, collisionPoint.y);  
+
     let wallHeight = 1/theRayDistance * 7000;
-   
+  
     noStroke();
     fill(1/theRayDistance * 4000 - 400, 1/theRayDistance * 4000 - 400, 1/theRayDistance * 4000);
     rect(i * wallSliceWidth, height / 2 - wallHeight / 2, wallSliceWidth, wallHeight);
