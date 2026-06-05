@@ -3,10 +3,10 @@
 // April 21 2026
 //
 // Extra for Experts:
-// a lot of this uses collide2d to work, so i had to use a different library, 
+// a lot of this uses collide2d to work, so i had to use a different library, it also uses p5.party to allow multiplayer
 
-// let player = {x, y};
-let thePlayers = [];
+let playerColors = ['red', 'green', 'yellow', 'orange', 'white', 'pink']
+
 let viewAngleValue = 0;
 let rays  = [];
 let cellSize = 20;
@@ -60,11 +60,15 @@ class Ray {
     let smallestDistance = Infinity;
 
     for (let wall of theWalls) {
-      let collisionPoint = collideLineLine(this.x, this.y, x2, y2, wall.x1, wall.y1, wall.x2, wall.y2, true);      
+      let collisionPoint = collideLineLine(this.x, this.y, x2, y2, wall.x1, wall.y1, wall.x2, wall.y2, true);   
+      if (!collisionPoint.x && !collisionPoint.y) {
+        continue;   
+      }
       let theDistance = dist(this.x, this.y, collisionPoint.x, collisionPoint.y);
       if (theDistance < smallestDistance) {
         smallestDistance = theDistance;
         closestPoint = collisionPoint;
+    
       }
     }
     return closestPoint;
@@ -114,6 +118,7 @@ class Player {
     this.viewAngle = 0;
     this.fov = fov;
     this.speed = 1;
+    this.color = 'red';
 
     for (let i = 0; i < this.fov; i++) {
       rays.push(new Ray(this.x, this.y, i));
@@ -143,8 +148,8 @@ class Player {
     }
 
     if (keyIsDown(65)) {
-      let nextX = this.x + sin(viewAngleValue + this.fov/2) * this.speed;
-      let nextY = this.y - sin(viewAngleValue + this.fov/2) * this.speed;
+      let nextX = this.x - cos(viewAngleValue + this.fov/2 + 90) * this.speed;
+      let nextY = this.y - sin(viewAngleValue + this.fov/2 + 90) * this.speed;
       if (collideWithWalls(nextX, this.y) === false) {
         this.x = nextX;
       }
@@ -154,8 +159,8 @@ class Player {
     }
 
     if (keyIsDown(68)) {
-      let nextX = this.x - sin(viewAngleValue + this.fov/2) * this.speed;
-      let nextY = this.y - cos(viewAngleValue + this.fov/2) * this.speed;
+      let nextX = this.x + cos(viewAngleValue + this.fov/2 + 90) * this.speed;
+      let nextY = this.y + sin(viewAngleValue + this.fov/2 + 90) * this.speed;
       if (collideWithWalls(nextX, this.y) === false) {
         this.x = nextX;
       }
@@ -164,7 +169,7 @@ class Player {
       }
     }
     strokeWeight(2);
-    fill('red');
+    fill(this.color);
     circle(this.x, this.y, this.radius);
   }
 }
@@ -172,6 +177,7 @@ class Player {
 
 function preload(){
   partyConnect("wss://demoserver.p5party.org", "raycaster_battle_cs30");
+  shared = partyLoadShared('shared');
 }
 
 
@@ -179,32 +185,46 @@ function setup() {
   angleMode(DEGREES);
   createCanvas(windowWidth, windowHeight); 
   makeMapWalls(secondMap);
-  
-  player = new Player(30, 50, 100);
-  // thePlayers.push(player);
 
+  if (partyIsHost()) {
+    shared.playerCount = 0;
+  }
+
+  player = new Player(30, 50, 100);
+  yourPlayer = shared.playerCount;
+  shared.playerCount++;
+
+  playerColor = playerColors[shared.playerCount - 1];
+
+  shared[yourPlayer] = {x: player.x, y: player.y, angle: viewAngleValue, color: playerColor};
+
+  console.log(shared[yourPlayer]);
+  player.color = playerColor;
 }
 
 
 function draw() {
+  shared[yourPlayer].x = player.x;
+  shared[yourPlayer].y = player.y;
+  shared[yourPlayer].angle = viewAngleValue;
+  shared[yourPlayer].color = player.color;
   background(0); 
   make3d();  
   drawWalls(theWalls);
- 
+
   player.draw();
+
+  for (let guest = 0; guest < shared.playerCount; guest++){
+    let somePlayer = shared[guest];
+    fill(somePlayer.color);
+    circle(somePlayer.x, somePlayer.y, player.radius);    
+  }
 
   for (let ray of rays) {
     ray.update();
     ray.draw();
   }
-
-  for(let ray = 0; ray < rays.length; ray++){
-    for(let wall = 0; wall < theWalls.length; wall++){
-      rays[ray].cast;
-    }
-  }
 }
-
 
 function drawWalls(theWalls) {
   for (let i = 0; i < theWalls.length; i++) {
@@ -257,12 +277,11 @@ function make3d() {
   let wallSliceWidth = width/rays.length;
   for (let i = 0; i < rays.length; i++) {
     let collisionPoint = rays[i].cast();
-
-    let theRayDistance = dist(player.x, player.y, collisionPoint.x, collisionPoint.y);   
+    let theRayDistance = dist(player.x, player.y, collisionPoint.x, collisionPoint.y);  
     let wallHeight = 1/theRayDistance * 7000;
    
     noStroke();
-    fill(1/theRayDistance * 4000 , 1/theRayDistance * 4000, 1/theRayDistance * 4000);
+    fill(1/theRayDistance * 4000 - 400, 1/theRayDistance * 4000 - 400, 1/theRayDistance * 4000);
     rect(i * wallSliceWidth, height / 2 - wallHeight / 2, wallSliceWidth, wallHeight);
   }
 }
