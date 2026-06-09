@@ -10,8 +10,6 @@ let yourPlayer;
 let playerColor;
 let playerDiameter = 8;
 
-let zBuffer = [];
-
 let viewAngleValue = 0;
 let rays  = [];
 let cellSize = 20;
@@ -315,12 +313,8 @@ function make3d() {
   let wallSliceWidth = width/rays.length;
   for (let i = 0; i < rays.length; i++) {
 
-    zBuffer.push(Infinity);
-
     let theRay = rays[i].cast();
     let theRayDistance = dist(yourPlayer.x, yourPlayer.y, theRay.point.x, theRay.point.y);  
-
-    zBuffer[i] = theRayDistance;
 
     let wallHeight = 1/theRayDistance * 7000;
 
