@@ -18,8 +18,8 @@ let rays  = [];
 let cellSize = 20;
 let theWalls = [];
 
-
-
+let lastSwitch;
+const WAIT_TIME = 200;
 
 //--------- classes --------------------------------------------------------------------------------//
 
@@ -58,7 +58,7 @@ class Ray {
   }
 
 
-// makes it so the ray shoots out your coordinate and at the right angle relative to where youre looking
+  // makes it so the ray shoots out your coordinate and at the right angle relative to where youre looking
   update(){
     this.x = yourPlayer.x;
     this.y = yourPlayer.y;
@@ -69,7 +69,7 @@ class Ray {
   }
 
 
-// goes through each point of intersection with the walls and then finds the shortest one and returns that
+  // goes through each point of intersection with the walls and then finds the shortest one and returns that
   cast() {
     let closestPoint;
     let smallestDistance = Infinity;
@@ -108,7 +108,7 @@ class Player {
   }
 
 
-// this is just regular old movement, but it needs some trig to work at different angles of movement
+  // this is just regular old movement, but it needs some trig to work at different angles of movement
   draw() {
     // changes viewing angle
     if(keyIsDown(LEFT_ARROW)){
@@ -185,6 +185,7 @@ function preload(){
 
 function setup() {
 // creates your player and the map for the game
+  lastSwitch = millis();
   angleMode(DEGREES);
   createCanvas(windowWidth, windowHeight); 
   makeMapWalls(theMap);
@@ -272,7 +273,7 @@ function drawHealthBar() {
   // health bar, takes players health at puts it at the top of the screen
   let barWidth = 500;
   let barHeight = 25;
-  let barX = width/2 - barWidth/2
+  let barX = width/2 - barWidth/2;
   let barY = 20;
 
   stroke('white');
@@ -365,20 +366,45 @@ function shoot() {
     let error = dist(rayX, rayY, shared[enemy].x, shared[enemy].y);
 
     if (error < playerDiameter * 2) {
-
       shared[enemy].health -= 10;
-
-      if (shared[enemy].health <= 0) {
-        shared[enemy].health = 100;
-        shared[enemy].x = cellSize * (enemy + 2);
-        shared[enemy].y = cellSize * 2;
-      }
     }
   }  
   if (shared[playerNumber].health <= 0) {
     shared[playerNumber].health = 100;
     shared[playerNumber].x = cellSize * (shared[playerNumber] + 2);
     shared[playerNumber].y = cellSize * 2;
+    drawDeathMessage();
+  }     
+   
+  if (shared[enemy].health <= 0) {
+    shared[enemy].health = 100;
+    shared[enemy].x = cellSize * (enemy + 2);
+    shared[enemy].y = cellSize * 2;
+    drawKillMessage();
+  }
+}
+
+
+
+
+function drawKillMessage() {
+  if (millis() >= lastSwitch + WAIT_TIME) {
+    textAlign(CENTER);
+    textSize(160);
+    fill('white');
+    text('KILL', width/2, height/2);
+  }
+}
+
+
+
+
+function drawDeathMessage() {
+  if (millis() >= lastSwitch + WAIT_TIME) {
+    textAlign(CENTER);
+    textSize(160);
+    fill('white');
+    text('KILL', width/2, height/2);
   }
 }
 
